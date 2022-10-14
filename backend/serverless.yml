@@ -1,5 +1,5 @@
 # TODO: Change the name of the org 
-org: sudkul
+org: yhaw08
 app: serverless-todo-app
 service: serverless-todo-app
 
@@ -14,7 +14,7 @@ provider:
   lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  region: ${opt:region, 'us-east-2'}
 
   tracing:
     lambda: true
@@ -23,8 +23,8 @@ provider:
   # Use these variables in the functions and resouorces section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
   environment:
-    TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_CREATED_AT_INDEX: CreatedAtIndex
+    TODOS_TABLE: ToDo-${self:provider.stage}
+    TODOS_CREATED_AT_INDEX: todoid
     ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
@@ -37,9 +37,8 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: "*"
+            - dynamodb:Scan
+          Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}"
 
 
 functions:
@@ -114,6 +113,14 @@ resources:
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
+        AttributeDefinitions:
+           - AttributeName: todoid
+             AttributeType: $
+        KeySchema:
+           - AttributeName: todoid
+             KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self.provider.environment.TODO_TABLES}
 
     # TODO: Complete the bucket properties below. 
     # Do not forget to add the CorsConfiguration propoerty
