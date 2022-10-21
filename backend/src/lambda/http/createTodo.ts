@@ -9,7 +9,7 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 //import { todoBuilder } from '../../helpers/todos'
 import { getUserId } from '../utils'
 import { createTodoItem } from '../../businessLogic/todos'
-
+ 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     //const newTodo: CreateTodoRequest = JSON.parse(event.body)
@@ -17,15 +17,21 @@ export const handler = middy(
     const userId = getUserId(event)
     const requestBody: CreateTodoRequest = JSON.parse(event.body)
     
+    
+    
 
-    if(requestBody.name == ""){
-      console.log("Cannot input Empty todo Item")
-    }
-    else{
+    if (requestBody.name == "") {
+      console.log("Enter a correct name")
+      throw {
+          status: 404,
+          error: new Error("Enter a correct name")    
+
+      }
+  }
+  else{
     
     const item = await createTodoItem(requestBody, userId)
     delete item['userId']
-  
     return {
       statusCode: 201,
       headers: {
@@ -35,8 +41,8 @@ export const handler = middy(
       body: JSON.stringify({
         item
       })
-    }}
-  }
+    }}}
+  
 )
 
 handler.use(
