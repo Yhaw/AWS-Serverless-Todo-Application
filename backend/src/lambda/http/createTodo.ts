@@ -17,6 +17,12 @@ export const handler = middy(
     const userId = getUserId(event)
     const requestBody: CreateTodoRequest = JSON.parse(event.body)
     
+
+    if(requestBody.name == ""){
+      console.log("Cannot input Empty todo Item")
+    }
+    else{
+    
     const item = await createTodoItem(requestBody, userId)
     delete item['userId']
   
@@ -30,6 +36,7 @@ export const handler = middy(
         item
       })
     }}
+  }
 )
 
 handler.use(
