@@ -7,6 +7,7 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  - serverless-reqvalidator-plugin
 
 provider:
   name: aws
@@ -112,6 +113,8 @@ functions:
       - http:
           method: delete
           path: todos/{todoId}
+          authorizer: Auth
+          cors: true
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -154,7 +157,7 @@ resources:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET, PUT, PATCH, POST, DELETE, OPTIONS'"
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi
@@ -206,6 +209,7 @@ resources:
             -
               AllowedOrigins:
                 - '*'
+                - 'http://localhost:3000'
               AllowedHeaders:
                 - '*'
               AllowedMethods:
@@ -215,6 +219,8 @@ resources:
                 - DELETE
                 - HEAD
               MaxAge: 3000
+              ExposedHeaders:
+                - "Access-Control-Allow-Origin"
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"

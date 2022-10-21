@@ -39,7 +39,10 @@ export async function patchTodo(
   await Axios.patch(`${apiEndpoint}/todos/${todoId}`, JSON.stringify(updatedTodo), {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${idToken}`
+      'Authorization': `Bearer ${idToken}`,
+      
+
+      
     }
   })
 }
@@ -51,7 +54,8 @@ export async function deleteTodo(
   await Axios.delete(`${apiEndpoint}/todos/${todoId}`, {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${idToken}`
+      'Authorization': `Bearer ${idToken}`,
+      
     }
   })
 }
@@ -63,7 +67,9 @@ export async function getUploadUrl(
   const response = await Axios.post(`${apiEndpoint}/todos/${todoId}/attachment`, '', {
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${idToken}`
+      'Authorization': `Bearer ${idToken}`,
+      
+
     }
   })
   return response.data.uploadUrl

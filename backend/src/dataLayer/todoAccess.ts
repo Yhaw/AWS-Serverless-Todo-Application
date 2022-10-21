@@ -14,7 +14,7 @@ export class TodoAccess {
     private readonly s3 = new AWS.S3({ signatureVersion: 'v4' }),
     private readonly todoTable = process.env.TODOS_TABLE,
     private readonly bucketName = process.env.ATTACHMENT_S3_BUCKET,
-    private readonly urlExpiration = process.env.SIGNED_URL_EXPIRATION) {
+    private readonly urlExpiration = 300) {
   }
 
   async getAllTodos(userId: string): Promise<TodoItem[]> {

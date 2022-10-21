@@ -5,28 +5,31 @@ import { cors } from 'middy/middlewares'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 
 //import { createTodo } from '../../businessLogic/todos'
-import {createTodo } from '../../helpers/todosAcess'
-import { todoBuilder } from '../../helpers/todos'
+//import {createTodo } from '../../helpers/todosAcess'
+//import { todoBuilder } from '../../helpers/todos'
+import { getUserId } from '../utils'
+import { createTodoItem } from '../../businessLogic/todos'
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const newTodo: CreateTodoRequest = JSON.parse(event.body)
+    //const newTodo: CreateTodoRequest = JSON.parse(event.body)
     // TODO: Implement creating a new TODO item
-    console.log(newTodo)
-
-   
-
-    const todo = todoBuilder(newTodo,event)
-
-     const createdTodo = await createTodo(todo)
- 
+    const userId = getUserId(event)
+    const requestBody: CreateTodoRequest = JSON.parse(event.body)
+    
+    const item = await createTodoItem(requestBody, userId)
+    delete item['userId']
+  
     return {
       statusCode: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
       body: JSON.stringify({
-        createdTodo
+        item
       })
-    }
-  }
+    }}
 )
 
 handler.use(

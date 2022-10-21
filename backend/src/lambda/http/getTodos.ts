@@ -3,8 +3,9 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
-import { getAllTodosByUserId } from '../../helpers/todosAcess'
+//import { getAllTodosByUserId } from '../../helpers/todosAcess'
 import { getUserId } from '../utils'
+import { getAllTodos } from '../../businessLogic/todos'
 
 //import { getTodosForUser as getTodosForUser } from '../../businessLogic/todos'
 //import { getUserId } from '../utils';
@@ -13,17 +14,21 @@ import { getUserId } from '../utils'
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // Write your code here
-    const todos = await getAllTodosByUserId(getUserId(event))
-     return {
-      statusCode: 201,
-       headers: {       
+    const userId = getUserId(event)
+
+  const items = await getAllTodos(userId)
+  items.forEach(item => delete item['userId'])
+
+  return {
+    statusCode: 200,
+    headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
- },
-      body: JSON.stringify({
-        items: todos
-      })
-    }
+    },
+    body: JSON.stringify({
+      items
+    })
+  }
   })
 
 handler.use(
